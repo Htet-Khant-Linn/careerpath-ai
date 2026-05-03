@@ -39,7 +39,7 @@ learning_roadmap_agent (SequentialAgent)
 | Layer | Technology |
 |-------|-------------|
 | **Backend** | Google Cloud Run + ADK + Gemini 2.5 Flash |
-| **Frontend** | Static HTML/CSS/JS (GitHub Pages) |
+| **Frontend** |  HTML (GitHub Pages) |
 | **Orchestration** | Google Agent Development Kit (ADK) |
 | **LLM** | Gemini 2.5 Flash (Google Vertex AI) |
 
