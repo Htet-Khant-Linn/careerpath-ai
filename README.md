@@ -4,7 +4,7 @@
 
 ![Demo](https://github.com/Htet-Khant-Linn/careerpath-ai/blob/main/Screenshot%202026-05-03%20191808.png)
 
-[CareerPath AI](https://htet-khant-linn.github.io/careerpath-ai/)
+**Click Here to test** -> [CareerPath AI](https://htet-khant-linn.github.io/careerpath-ai/)
 ---
 
 ## 🧠 How It Works
