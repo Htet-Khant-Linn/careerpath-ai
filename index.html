@@ -209,9 +209,9 @@
         <div>
           <span class="slabel">Current skill level</span>
           <div class="lgroup">
-            <button class="lbtn" data-v="beginner"     onclick="selLevel(this)">Beginner     <div class="ldot"></div></button>
-            <button class="lbtn" data-v="intermediate" onclick="selLevel(this)">Intermediate <div class="ldot"></div></button>
-            <button class="lbtn" data-v="advanced"     onclick="selLevel(this)">Advanced     <div class="ldot"></div></button>
+            <button class="lbtn" data-v="beginner"     onclick="chooseLevel(this)">Beginner     <div class="ldot"></div></button>
+            <button class="lbtn" data-v="intermediate" onclick="chooseLevel(this)">Intermediate <div class="ldot"></div></button>
+            <button class="lbtn" data-v="advanced"     onclick="chooseLevel(this)">Advanced     <div class="ldot"></div></button>
           </div>
         </div>
         <div>
@@ -276,10 +276,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
 
-// ── IMPORTANT: Replace this with your Cloud Run URL after deployment ──────────
 const BACKEND_URL = "https://careerpath-ai-2235411926.us-central1.run.app";
-// Example: "https://careerpath-ai-abc123-uc.a.run.app"
-// ─────────────────────────────────────────────────────────────────────────────
 
 const CAREERS = {
   "1":"Software Developer / Engineer",
@@ -300,6 +297,7 @@ let selCareer = null, selLevel = null, rawMd = "";
 const grid = document.getElementById("career-grid");
 Object.entries(CAREERS).forEach(([n, name]) => {
   const b = document.createElement("button");
+  b.type = "button";
   b.className = "cbtn"; b.dataset.v = n;
   b.innerHTML = `<span class="num">${n.padStart(2,"0")}</span><span class="name">${name}</span>`;
   b.onclick = () => {
@@ -309,7 +307,7 @@ Object.entries(CAREERS).forEach(([n, name]) => {
   grid.appendChild(b);
 });
 
-function selLevel(el) {
+function chooseLevel(el) {
   document.querySelectorAll(".lbtn").forEach(x => x.classList.remove("sel"));
   el.classList.add("sel"); selLevel = el.dataset.v; chk();
 }
