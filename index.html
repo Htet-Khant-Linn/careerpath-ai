@@ -3,110 +3,190 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CareerPath AI — Learning Roadmap</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=DM+Mono&family=DM+Sans&display=swap" rel="stylesheet" />
+<title>CareerPath AI — Learning Roadmap Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #f5f0e8; color: #0d0d0d; padding: 24px; }
-  .wrap { max-width: 800px; margin: 0 auto; }
-  h1 { font-family: 'Syne', sans-serif; margin-bottom: 24px; }
-  .card { background: #fff; padding: 24px; border: 2px solid #0d0d0d; border-radius: 4px; margin-bottom: 24px; box-shadow: 4px 4px 0 #0d0d0d; }
-  select, input, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 16px; border: 2px solid #c8c0b0; border-radius: 4px; font-family: inherit; }
-  button { background: #0d0d0d; color: #fff; font-weight: bold; cursor: pointer; border: 2px solid #0d0d0d; }
-  button:hover { background: #d4501a; border-color: #d4501a; }
-  #result, #loading { display: none; }
-  .error { color: red; font-weight: bold; margin-bottom: 16px; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #ffffff;
+    --bg-cream: #f5f0e8;
+    --accent: #d4501a;
+    --border: #c8c0b0;
+    --font-main: 'Inter', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-main);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 60px 20px;
+    background-color: var(--bg-cream);
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  header { margin-bottom: 30px; }
+  header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .subtitle { font-size: 0.9rem; color: rgba(13, 13, 13, 0.7); font-weight: 600; }
+
+  .card {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    padding: 40px;
+    margin-bottom: 32px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .instruction { font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; color: #444; }
+  .label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* --- Career Grid --- */
+  .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 32px; }
+  .opt-btn {
+    padding: 18px;
+    background: var(--bg-cream);
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .opt-btn:hover { border-color: var(--ink); background: #eeebe3; }
+  .opt-btn.sel { border-color: var(--ink); background: #fff; box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px); }
+  .opt-btn .idx { font-size: 0.7rem; font-weight: 700; color: #888; }
+  .opt-btn .name { font-size: 0.9rem; font-weight: 600; }
+
+  /* --- Level Row --- */
+  .level-row { display: flex; gap: 10px; margin-bottom: 32px; }
+  .level-btn { flex: 1; padding: 15px; border: 1.5px solid var(--border); border-radius: 3px; background: var(--bg-cream); cursor: pointer; font-weight: 600; transition: all 0.2s; }
+  .level-btn:hover { border-color: var(--ink); }
+  .level-btn.sel { border-color: var(--ink); background: #fff; box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px); }
+
+  /* --- Time Input --- */
+  input { width: 100%; padding: 15px; border: 1.5px solid var(--border); border-radius: 3px; font-family: inherit; font-size: 0.95rem; outline: none; background: var(--bg-cream); }
+  input:focus { border-color: var(--ink); background: #fff; }
+  .time-hints { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; margin-bottom: 40px; }
+  .thint { font-size: 0.7rem; border: 1px dashed var(--border); padding: 5px 12px; cursor: pointer; background: transparent; }
+  .thint:hover { border-style: solid; border-color: var(--ink); }
+
+  .btn-main { width: 100%; padding: 20px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+  .btn-main:hover:not(:disabled) { background: var(--accent); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  #loading, #result { display: none; }
+  .rbody h2 { margin-top: 30px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>CareerPath AI</h1>
-  
-  <div class="card" id="form-card">
-    <label>Career Path:</label>
-    <select id="career">
-      <option value="1">Software Developer / Engineer</option>
-      <option value="2">AI / Machine Learning Engineer</option>
-      <option value="3">Data Scientist</option>
-      <option value="4">Cybersecurity Analyst / Engineer</option>
-      <option value="5">Cloud Architect</option>
-      <option value="6">DevOps Engineer</option>
-      <option value="7">Data Engineer</option>
-      <option value="8">Web Developer</option>
-      <option value="9">Computer Systems Analyst</option>
-      <option value="10">Software Architect</option>
-    </select>
 
-    <label>Skill Level:</label>
-    <select id="level">
-      <option value="beginner">Beginner</option>
-      <option value="intermediate">Intermediate</option>
-      <option value="advanced">Advanced</option>
-    </select>
+  <header>
+    <h1>CareerPath AI</h1>
+    <p class="subtitle">Free to use · No sign-up required</p>
+  </header>
 
-    <label>Available Time (e.g., 6 months, 10 hours per week):</label>
-    <input type="text" id="time" placeholder="e.g. 6 months" />
+  <div id="form-section">
+    <div class="card">
+      <p class="instruction">Please fill in your details to generate a highly personalized learning roadmap. Our AI agents will research industry requirements, top-rated resources, and practical projects tailored specifically to your career goals and availability.</p>
 
-    <div id="error-msg" class="error"></div>
-    <button onclick="generateRoadmap()">Generate Roadmap</button>
+      <label class="label">1. Target Career:</label>
+      <div class="options-grid" id="career-grid"></div>
+
+      <label class="label">2. Experience Level:</label>
+      <div class="level-row">
+        <button class="level-btn" onclick="selectLevel(this, 'beginner')">Beginner</button>
+        <button class="level-btn" onclick="selectLevel(this, 'intermediate')">Intermediate</button>
+        <button class="level-btn" onclick="selectLevel(this, 'advanced')">Advanced</button>
+      </div>
+
+      <label class="label">3. Available Time:</label>
+      <input type="text" id="time" placeholder="e.g. 6 months, 10 hours/week" oninput="chk()" />
+      <div class="time-hints">
+        <span class="thint" onclick="setT('3 months')">3 months</span>
+        <span class="thint" onclick="setT('6 months')">6 months</span>
+        <span class="thint" onclick="setT('10 hrs/wk')">10 hrs/wk</span>
+        <span class="thint" onclick="setT('20 hrs/wk')">20 hrs/wk</span>
+      </div>
+
+      <button class="btn-main" id="subbtn" onclick="generate()" disabled>Generate Roadmap</button>
+    </div>
   </div>
 
   <div class="card" id="loading">
-    <h3>Building your roadmap... Please wait.</h3>
+    <h2 style="text-align:center">Compiling your roadmap...</h2>
+    <p style="text-align:center; color:#666; margin-top:10px;">Our specialist agents are currently researching the best path for you.</p>
   </div>
 
   <div class="card" id="result">
-    <div id="roadmap-content"></div>
-    <button onclick="reset()">Start Over</button>
+    <div class="rbody" id="roadmap-content"></div>
+    <button class="btn-main" style="margin-top:30px;" onclick="location.reload()">New Roadmap</button>
   </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
-  // Ensure there is NO slash at the end of this URL
   const BACKEND_URL = "https://careerpath-ai-2235411926.us-central1.run.app";
+  const CAREERS = {
+    "1":"Software Developer", "2":"AI / ML Engineer", "3":"Data Scientist",
+    "4":"Cybersecurity", "5":"Cloud Architect", "6":"DevOps Engineer",
+    "7":"Data Engineer", "8":"Web Developer", "9":"Systems Analyst", "10":"Software Architect"
+  };
 
-  async function generateRoadmap() {
-    const career = document.getElementById("career").value;
-    const level = document.getElementById("level").value;
-    const time = document.getElementById("time").value.trim();
-    const err = document.getElementById("error-msg");
+  let selCareer = null, selLevel = null;
 
-    if (!time) {
-      err.textContent = "Please enter your available time.";
-      return;
-    }
+  const grid = document.getElementById("career-grid");
+  Object.entries(CAREERS).forEach(([n, name]) => {
+    const b = document.createElement("button");
+    b.className = "opt-btn";
+    b.innerHTML = `<span class="idx">${n.padStart(2,'0')}</span><span class="name">${name}</span>`;
+    b.onclick = () => {
+      document.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel"); selCareer = n; chk();
+    };
+    grid.appendChild(b);
+  });
 
-    err.textContent = "";
-    document.getElementById("form-card").style.display = "none";
+  function selectLevel(el, val) {
+    document.querySelectorAll(".level-btn").forEach(x => x.classList.remove("sel"));
+    el.classList.add("sel"); selLevel = val; chk();
+  }
+
+  function setT(v) { document.getElementById("time").value = v; chk(); }
+
+  function chk() {
+    document.getElementById("subbtn").disabled = !(selCareer && selLevel && document.getElementById("time").value.trim());
+  }
+
+  async function generate() {
+    document.getElementById("form-section").style.display = "none";
     document.getElementById("loading").style.display = "block";
-
     try {
-      const response = await fetch(`${BACKEND_URL}/generate`, {
+      const res = await fetch(`${BACKEND_URL}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ career_choice: career, level: level, time_input: time })
+        body: JSON.stringify({
+          career_choice: selCareer,
+          level: selLevel,
+          time_input: document.getElementById("time").value
+        })
       });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Server error");
-
+      const data = await res.json();
       document.getElementById("loading").style.display = "none";
       document.getElementById("result").style.display = "block";
       document.getElementById("roadmap-content").innerHTML = marked.parse(data.roadmap);
-
-    } catch (error) {
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("form-card").style.display = "block";
-      err.textContent = error.message;
+    } catch (e) {
+      alert("Error: " + e.message);
+      location.reload();
     }
-  }
-
-  function reset() {
-    document.getElementById("result").style.display = "none";
-    document.getElementById("form-card").style.display = "block";
-    document.getElementById("time").value = "";
   }
 </script>
 </body>
