@@ -4,6 +4,7 @@
 
 ![Demo](https://github.com/Htet-Khant-Linn/careerpath-ai/blob/main/Screenshot%202026-05-03%20191808.png)
 
+[CareerPath AI](https://htet-khant-linn.github.io/careerpath-ai/)
 ---
 
 ## 🧠 How It Works
@@ -68,13 +69,17 @@ In **Google Cloud Shell** or your terminal:
 ```bash
 # Set your active project
 gcloud config set project YOUR_PROJECT_ID
+```
 
+```bash
 # Enable required APIs
 gcloud services enable \
   aiplatform.googleapis.com \
   cloudbuild.googleapis.com \
   run.googleapis.com
+```
 
+```bash
 # Deploy to Cloud Run
 gcloud run deploy careerpath-ai \
   --source . \
@@ -82,16 +87,14 @@ gcloud run deploy careerpath-ai \
   --allow-unauthenticated \
   --memory 2Gi \
   --timeout 120
-
-
+```
 
 📝 Note: *After successful deployment, Cloud Run will output a Service URL (e.g., https://careerpath-ai-xyz-uc.a.run.app). Save this for the frontend setup.*
 
-
 ## 2. Frontend (GitHub Pages)
-Open index.html in a text editor
+Open `index.html` in a text editor
 
-Find the BACKEND_URL variable and set it to your Cloud Run service URL:
+Find the **BACKEND_URL** variable and set it to your Cloud Run service URL:
 ```bash
 const BACKEND_URL = "https://careerpath-ai-xyz-uc.a.run.app"; // No trailing slash
 ```
