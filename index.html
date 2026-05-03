@@ -3,431 +3,111 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CareerPath AI — Learning Roadmap Generator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+<title>CareerPath AI — Learning Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=DM+Mono&family=DM+Sans&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ink:     #0d0d0d;
-    --paper:   #f5f0e8;
-    --cream:   #ece7dc;
-    --accent:  #d4501a;
-    --accent2: #1a6dd4;
-    --green:   #2a9d5c;
-    --muted:   #8a8070;
-    --border:  #c8c0b0;
-    --card:    #ffffff;
-    --fh:      'Syne', sans-serif;
-    --fm:      'DM Mono', monospace;
-    --fb:      'DM Sans', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--fb);
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* grain overlay */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 1000; opacity: 0.4;
-  }
-
-  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
-
-  /* ── Header ── */
-  header {
-    padding: 52px 0 36px;
-    border-bottom: 2px solid var(--ink);
-    margin-bottom: 48px;
-  }
-  .header-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-  .logo h1 { font-family: var(--fh); font-size: clamp(2rem,5vw,3.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
-  .logo h1 span { color: var(--accent); }
-  .logo p { font-family: var(--fm); font-size: 0.76rem; color: var(--muted); margin-top: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .badge { font-family: var(--fm); font-size: 0.7rem; font-style: italic; color: var(--muted); border: 1px solid var(--border); padding: 6px 14px; border-radius: 2px; white-space: nowrap; }
-
-  /* ── Steps bar ── */
-  .steps { display: flex; border: 2px solid var(--ink); overflow: hidden; border-radius: 4px; margin-bottom: 44px; }
-  .step { flex: 1; padding: 14px 10px; text-align: center; font-family: var(--fm); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); border-right: 1px solid var(--border); transition: all .3s; }
-  .step:last-child { border-right: none; }
-  .step .n { display: block; font-family: var(--fh); font-size: 1.35rem; font-weight: 700; color: var(--border); line-height: 1; margin-bottom: 3px; transition: color .3s; }
-  .step.active { background: var(--ink); color: var(--paper); }
-  .step.active .n { color: var(--accent); }
-  .step.done { background: var(--cream); }
-  .step.done .n { color: var(--accent2); }
-
-  /* ── Cards ── */
-  .card {
-    background: var(--card);
-    border: 2px solid var(--ink);
-    border-radius: 4px;
-    padding: 36px 40px;
-    margin-bottom: 32px;
-    box-shadow: 6px 6px 0 var(--ink);
-    animation: up .45s ease both;
-  }
-  @keyframes up { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
-  .card h2 { font-family: var(--fh); font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
-  .card h2 .tag { font-family: var(--fm); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--accent); color: var(--accent); padding: 3px 8px; border-radius: 2px; font-weight: 400; }
-
-  /* ── Career grid ── */
-  .slabel { font-family: var(--fm); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 10px; }
-  .career-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px,1fr)); gap: 9px; margin-bottom: 0; }
-  .cbtn { padding: 13px 14px; border: 2px solid var(--border); border-radius: 3px; background: var(--paper); cursor: pointer; text-align: left; transition: all .18s; font-family: var(--fb); display: flex; align-items: flex-start; gap: 9px; line-height: 1.3; }
-  .cbtn:hover { border-color: var(--ink); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--ink); }
-  .cbtn.sel { border-color: var(--accent); background: #fff5f0; box-shadow: 4px 4px 0 var(--accent); transform: translate(-2px,-2px); }
-  .cbtn .num { font-family: var(--fm); font-size: 0.65rem; color: var(--muted); padding-top: 2px; min-width: 18px; }
-  .cbtn .name { font-size: 0.86rem; font-weight: 500; }
-
-  /* ── Two col ── */
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
-  @media(max-width:580px){ .two-col { grid-template-columns: 1fr; } }
-
-  /* ── Level buttons ── */
-  .lgroup { display: flex; flex-direction: column; gap: 7px; }
-  .lbtn { padding: 11px 14px; border: 2px solid var(--border); border-radius: 3px; background: var(--paper); cursor: pointer; font-family: var(--fb); font-size: 0.88rem; text-align: left; transition: all .18s; display: flex; align-items: center; justify-content: space-between; }
-  .lbtn:hover { border-color: var(--ink); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--ink); }
-  .lbtn.sel { border-color: var(--accent2); background: #f0f5ff; box-shadow: 4px 4px 0 var(--accent2); transform: translate(-2px,-2px); }
-  .ldot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--border); transition: all .18s; }
-  .lbtn.sel .ldot { background: var(--accent2); border-color: var(--accent2); }
-
-  /* ── Text inputs ── */
-  .tinput { width: 100%; padding: 11px 14px; border: 2px solid var(--border); border-radius: 3px; font-family: var(--fm); font-size: 0.86rem; background: var(--paper); color: var(--ink); outline: none; transition: border-color .2s; }
-  .tinput:focus { border-color: var(--ink); }
-  .tinput::placeholder { color: var(--border); }
-  .time-hints { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .thint { font-family: var(--fm); font-size: 0.63rem; color: var(--muted); border: 1px dashed var(--border); padding: 4px 8px; border-radius: 2px; cursor: pointer; transition: all .15s; }
-  .thint:hover { border-color: var(--accent2); color: var(--accent2); border-style: solid; }
-
-  /* ── Submit ── */
-  .submit-btn { width: 100%; padding: 17px; background: var(--ink); color: var(--paper); border: 2px solid var(--ink); border-radius: 3px; font-family: var(--fh); font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .submit-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); transform: translate(-3px,-3px); box-shadow: 5px 5px 0 var(--ink); }
-  .submit-btn:disabled { opacity: .38; cursor: not-allowed; }
-
-  /* ── Error ── */
-  .errbox { background: #fff0f0; border: 2px solid var(--accent); border-radius: 3px; padding: 16px 20px; margin-top: 18px; font-family: var(--fm); font-size: 0.8rem; display: none; }
-  .errbox strong { color: var(--accent); }
-
-  /* ── Loading ── */
-  #loading { display: none; padding: 64px 0; text-align: center; }
-  .ring { width: 52px; height: 52px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .85s linear infinite; margin: 0 auto 24px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-title { font-family: var(--fh); font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
-  .loading-sub { font-family: var(--fm); font-size: 0.75rem; color: var(--muted); margin-bottom: 30px; }
-  .stages { display: flex; flex-direction: column; gap: 9px; max-width: 420px; margin: 0 auto; }
-  .stage { display: flex; align-items: center; gap: 11px; padding: 10px 15px; border-radius: 3px; font-family: var(--fm); font-size: 0.77rem; color: var(--muted); border: 1px solid var(--border); background: var(--cream); transition: all .3s; }
-  .stage.run { border-color: var(--accent); color: var(--ink); background: #fff5f0; }
-  .stage.done { border-color: var(--green); color: var(--green); background: #f0fff6; }
-  .si { font-size: .95rem; min-width: 20px; }
-
-  /* ── Result ── */
-  #result { display: none; }
-  .result-hdr { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 2px solid var(--ink); }
-  .result-hdr h2 { font-family: var(--fh); font-size: 1.75rem; font-weight: 800; }
-  .rmeta { display: flex; gap: 7px; flex-wrap: wrap; }
-  .mtag { font-family: var(--fm); font-size: 0.67rem; padding: 4px 10px; border-radius: 2px; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
-  .mtag.c { border-color: var(--accent); color: var(--accent); background: #fff5f0; }
-  .mtag.l { border-color: var(--accent2); color: var(--accent2); background: #f0f5ff; }
-  .mtag.t { border-color: var(--green); color: var(--green); background: #f0fff6; }
-
-  /* ── Roadmap markdown ── */
-  .rbody { line-height: 1.78; font-size: 0.95rem; }
-  .rbody h1,.rbody h2 { font-family: var(--fh); font-weight: 700; margin: 34px 0 14px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
-  .rbody h1 { font-size: 1.65rem; }
-  .rbody h2 { font-size: 1.25rem; }
-  .rbody h3 { font-family: var(--fh); font-size: 1.02rem; font-weight: 600; margin: 22px 0 9px; color: var(--accent); }
-  .rbody p { margin-bottom: 13px; }
-  .rbody ul,.rbody ol { padding-left: 22px; margin-bottom: 14px; }
-  .rbody li { margin-bottom: 5px; }
-  .rbody strong { font-weight: 600; }
-  .rbody em { font-style: italic; color: var(--muted); }
-  .rbody code { font-family: var(--fm); font-size: 0.81em; background: var(--cream); padding: 2px 6px; border-radius: 2px; border: 1px solid var(--border); }
-  .rbody pre { background: var(--ink); color: var(--paper); padding: 18px 22px; border-radius: 4px; overflow-x: auto; margin: 18px 0; font-family: var(--fm); font-size: 0.82rem; line-height: 1.6; }
-  .rbody pre code { background: none; border: none; padding: 0; color: inherit; }
-  .rbody blockquote { border-left: 3px solid var(--accent); padding-left: 18px; margin: 18px 0; color: var(--muted); font-style: italic; }
-  .rbody table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 0.87rem; }
-  .rbody th { font-family: var(--fm); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--ink); color: var(--paper); padding: 9px 13px; text-align: left; }
-  .rbody td { padding: 9px 13px; border-bottom: 1px solid var(--border); }
-  .rbody tr:nth-child(even) td { background: var(--cream); }
-
-  /* ── Action buttons ── */
-  .action-row { display: flex; gap: 10px; margin-top: 36px; flex-wrap: wrap; }
-  .btn-sec { padding: 11px 22px; border: 2px solid var(--ink); border-radius: 3px; background: transparent; font-family: var(--fh); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all .18s; }
-  .btn-sec:hover { background: var(--ink); color: var(--paper); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--accent); }
-  .btn-rst { padding: 11px 22px; border: 2px solid var(--border); border-radius: 3px; background: transparent; font-family: var(--fh); font-size: 0.88rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .18s; }
-  .btn-rst:hover { border-color: var(--ink); color: var(--ink); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--border); }
-
-  /* ── Footer ── */
-  footer { margin-top: 80px; padding: 28px 0; border-top: 1px solid var(--border); text-align: center; font-family: var(--fm); font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f5f0e8; color: #0d0d0d; padding: 24px; }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  h1 { font-family: 'Syne', sans-serif; margin-bottom: 24px; }
+  .card { background: #fff; padding: 24px; border: 2px solid #0d0d0d; border-radius: 4px; margin-bottom: 24px; box-shadow: 4px 4px 0 #0d0d0d; }
+  select, input, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 16px; border: 2px solid #c8c0b0; border-radius: 4px; font-family: inherit; }
+  button { background: #0d0d0d; color: #fff; font-weight: bold; cursor: pointer; border: 2px solid #0d0d0d; }
+  button:hover { background: #d4501a; border-color: #d4501a; }
+  #result, #loading { display: none; }
+  .error { color: red; font-weight: bold; margin-bottom: 16px; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <h1>CareerPath AI</h1>
+  
+  <div class="card" id="form-card">
+    <label>Career Path:</label>
+    <select id="career">
+      <option value="1">Software Developer / Engineer</option>
+      <option value="2">AI / Machine Learning Engineer</option>
+      <option value="3">Data Scientist</option>
+      <option value="4">Cybersecurity Analyst / Engineer</option>
+      <option value="5">Cloud Architect</option>
+      <option value="6">DevOps Engineer</option>
+      <option value="7">Data Engineer</option>
+      <option value="8">Web Developer</option>
+      <option value="9">Computer Systems Analyst</option>
+      <option value="10">Software Architect</option>
+    </select>
 
-  <!-- Header -->
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <h1>Career<span>Path</span> AI</h1>
-        <p>Personalised Learning Roadmap Generator · Powered by Gemini + Google ADK</p>
-      </div>
-      <div class="badge">Free to use · No sign-up required</div>
-    </div>
-  </header>
+    <label>Skill Level:</label>
+    <select id="level">
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="advanced">Advanced</option>
+    </select>
 
-  <!-- Steps -->
-  <div class="steps">
-    <div class="step active" id="s1"><span class="n">01</span>Configure</div>
-    <div class="step" id="s2"><span class="n">02</span>Generate</div>
-    <div class="step" id="s3"><span class="n">03</span>Roadmap</div>
+    <label>Available Time (e.g., 6 months, 10 hours per week):</label>
+    <input type="text" id="time" placeholder="e.g. 6 months" />
+
+    <div id="error-msg" class="error"></div>
+    <button onclick="generateRoadmap()">Generate Roadmap</button>
   </div>
 
-  <!-- ── FORM ── -->
-  <div id="form-section">
-
-    <!-- Career path -->
-    <div class="card">
-      <h2>Career Path <span class="tag">Step 1 of 3</span></h2>
-      <span class="slabel">Choose your target career</span>
-      <div class="career-grid" id="career-grid"></div>
-    </div>
-
-    <!-- Level & Time -->
-    <div class="card">
-      <h2>Level &amp; Time <span class="tag">Step 2–3 of 3</span></h2>
-      <div class="two-col">
-        <div>
-          <span class="slabel">Current skill level</span>
-          <div class="lgroup">
-            <button class="lbtn" data-v="beginner"     onclick="chooseLevel(this)">Beginner     <div class="ldot"></div></button>
-            <button class="lbtn" data-v="intermediate" onclick="chooseLevel(this)">Intermediate <div class="ldot"></div></button>
-            <button class="lbtn" data-v="advanced"     onclick="chooseLevel(this)">Advanced     <div class="ldot"></div></button>
-          </div>
-        </div>
-        <div>
-          <label class="slabel" for="ti">Available time</label>
-          <input type="text" id="ti" class="tinput" placeholder="e.g. 6 months" oninput="chk()" />
-          <div class="time-hints">
-            <span class="thint" onclick="setT('3 months')">3 months</span>
-            <span class="thint" onclick="setT('6 months')">6 months</span>
-            <span class="thint" onclick="setT('1 year')">1 year</span>
-            <span class="thint" onclick="setT('5 hours per week')">5 hrs/wk</span>
-            <span class="thint" onclick="setT('10 hours per week')">10 hrs/wk</span>
-            <span class="thint" onclick="setT('20 hours per week')">20 hrs/wk</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="errbox" id="errbox"><strong>Error — </strong><span id="errmsg"></span></div>
-
-      <button class="submit-btn" id="subbtn" onclick="doSubmit()" disabled>
-        Generate My Roadmap →
-      </button>
-    </div>
-
+  <div class="card" id="loading">
+    <h3>Building your roadmap... Please wait.</h3>
   </div>
 
-  <!-- ── LOADING ── -->
-  <div id="loading">
-    <div class="ring"></div>
-    <div class="loading-title">Building your roadmap…</div>
-    <div class="loading-sub">Multi-agent system running on Google Cloud</div>
-    <div class="stages">
-      <div class="stage" id="st0"><span class="si">⚡</span>Parallel research agents initialising</div>
-      <div class="stage" id="st1"><span class="si">🛠️</span>Skills agent — mapping career requirements</div>
-      <div class="stage" id="st2"><span class="si">📚</span>Resources agent — finding best courses &amp; books</div>
-      <div class="stage" id="st3"><span class="si">🏗️</span>Projects agent — designing portfolio ideas</div>
-      <div class="stage" id="st4"><span class="si">💼</span>Market agent — analysing job landscape</div>
-      <div class="stage" id="st5"><span class="si">📅</span>Timeline agent — building phased schedule</div>
-      <div class="stage" id="st6"><span class="si">📋</span>Synthesis agent — compiling final roadmap</div>
-    </div>
+  <div class="card" id="result">
+    <div id="roadmap-content"></div>
+    <button onclick="reset()">Start Over</button>
   </div>
-
-  <!-- ── RESULT ── -->
-  <div id="result">
-    <div class="result-hdr">
-      <h2>Your Roadmap</h2>
-      <div class="rmeta" id="rmeta"></div>
-    </div>
-    <div class="rbody" id="rcontent"></div>
-    <div class="action-row">
-      <button class="btn-sec" onclick="copyMd()">Copy Markdown</button>
-      <button class="btn-sec" onclick="dlMd()">Download .md</button>
-      <button class="btn-rst" onclick="reset()">Start Over</button>
-    </div>
-  </div>
-
-</div><!-- /wrap -->
-
-<footer>
-  CareerPath AI &mdash; Powered by Gemini 2.5 Flash via Vertex AI &middot; Google ADK Multi-Agent Pattern &middot; Free to use
-</footer>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
+  // Ensure there is NO slash at the end of this URL
+  const BACKEND_URL = "https://careerpath-ai-2235411926.us-central1.run.app";
 
-const BACKEND_URL = "https://careerpath-ai-2235411926.us-central1.run.app";
+  async function generateRoadmap() {
+    const career = document.getElementById("career").value;
+    const level = document.getElementById("level").value;
+    const time = document.getElementById("time").value.trim();
+    const err = document.getElementById("error-msg");
 
-const CAREERS = {
-  "1":"Software Developer / Engineer",
-  "2":"AI / Machine Learning Engineer",
-  "3":"Data Scientist",
-  "4":"Cybersecurity Analyst / Engineer",
-  "5":"Cloud Architect",
-  "6":"DevOps Engineer",
-  "7":"Data Engineer",
-  "8":"Web Developer",
-  "9":"Computer Systems Analyst",
-  "10":"Software Architect"
-};
-
-let selCareer = null, selLevel = null, rawMd = "";
-
-// Build career grid
-const grid = document.getElementById("career-grid");
-Object.entries(CAREERS).forEach(([n, name]) => {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "cbtn"; b.dataset.v = n;
-  b.innerHTML = `<span class="num">${n.padStart(2,"0")}</span><span class="name">${name}</span>`;
-  b.onclick = () => {
-    document.querySelectorAll(".cbtn").forEach(x => x.classList.remove("sel"));
-    b.classList.add("sel"); selCareer = n; chk();
-  };
-  grid.appendChild(b);
-});
-
-function chooseLevel(el) {
-  document.querySelectorAll(".lbtn").forEach(x => x.classList.remove("sel"));
-  el.classList.add("sel"); selLevel = el.dataset.v; chk();
-}
-
-function setT(v) { document.getElementById("ti").value = v; chk(); }
-
-function chk() {
-  document.getElementById("subbtn").disabled =
-    !(selCareer && selLevel && document.getElementById("ti").value.trim());
-}
-
-function setStep(n) {
-  for (let i=1;i<=3;i++){
-    const e = document.getElementById(`s${i}`);
-    e.classList.remove("active","done");
-    if(i<n) e.classList.add("done");
-    else if(i===n) e.classList.add("active");
-  }
-}
-
-function animateStages() {
-  const delays = [0,700,1300,2000,2700,5200,8500];
-  delays.forEach((d,i) => setTimeout(()=>{
-    if(i>0){ const p=document.getElementById(`st${i-1}`); p.classList.remove("run"); p.classList.add("done"); }
-    document.getElementById(`st${i}`).classList.add("run");
-  }, d));
-}
-
-function finishStages() {
-  for(let i=0;i<=6;i++){
-    const s=document.getElementById(`st${i}`);
-    s.classList.remove("run"); s.classList.add("done");
-  }
-}
-
-function showErr(m) {
-  document.getElementById("errmsg").textContent = m;
-  document.getElementById("errbox").style.display = "block";
-}
-function hideErr() { document.getElementById("errbox").style.display = "none"; }
-
-async function doSubmit() {
-  hideErr();
-  const timeRaw = document.getElementById("ti").value.trim();
-
-  // Switch to loading view
-  document.getElementById("form-section").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("result").style.display = "none";
-  setStep(2);
-  animateStages();
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        career_choice: selCareer,
-        level: selLevel,
-        time_input: timeRaw
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || `Server error ${res.status}`);
+    if (!time) {
+      err.textContent = "Please enter your available time.";
+      return;
     }
 
-    rawMd = data.roadmap;
-    finishStages();
+    err.textContent = "";
+    document.getElementById("form-card").style.display = "none";
+    document.getElementById("loading").style.display = "block";
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ career_choice: career, level: level, time_input: time })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Server error");
+
       document.getElementById("loading").style.display = "none";
       document.getElementById("result").style.display = "block";
-      setStep(3);
+      document.getElementById("roadmap-content").innerHTML = marked.parse(data.roadmap);
 
-      document.getElementById("rmeta").innerHTML = `
-        <span class="mtag c">${data.career}</span>
-        <span class="mtag l">${data.level}</span>
-        <span class="mtag t">${data.time_description}</span>
-      `;
-      document.getElementById("rcontent").innerHTML = marked.parse(rawMd);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
-
-  } catch(err) {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("form-section").style.display = "block";
-    setStep(1);
-    showErr(err.message || "Failed to connect to backend. Check that Cloud Run is deployed.");
+    } catch (error) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("form-card").style.display = "block";
+      err.textContent = error.message;
+    }
   }
-}
 
-function copyMd() {
-  navigator.clipboard.writeText(rawMd).then(()=>{
-    const b = event.target; const o = b.textContent;
-    b.textContent = "Copied ✓"; setTimeout(()=>b.textContent=o, 1800);
-  });
-}
-
-function dlMd() {
-  const slug = (CAREERS[selCareer]||"career").toLowerCase().replace(/[^a-z0-9]+/g,"-");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([rawMd],{type:"text/markdown"}));
-  a.download = `roadmap-${slug}.md`; a.click();
-}
-
-function reset() {
-  selCareer = null; selLevel = null; rawMd = "";
-  document.querySelectorAll(".cbtn,.lbtn").forEach(b=>b.classList.remove("sel"));
-  document.getElementById("ti").value = "";
-  document.getElementById("subbtn").disabled = true;
-  for(let i=0;i<=6;i++){ const s=document.getElementById(`st${i}`); s.classList.remove("run","done"); }
-  document.getElementById("result").style.display = "none";
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("form-section").style.display = "block";
-  setStep(1); hideErr();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
+  function reset() {
+    document.getElementById("result").style.display = "none";
+    document.getElementById("form-card").style.display = "block";
+    document.getElementById("time").value = "";
+  }
 </script>
 </body>
 </html>
