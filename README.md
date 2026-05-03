@@ -2,7 +2,7 @@
 
 **Personalized Learning Roadmap Generator** powered by Google's Agent Development Kit (ADK) and Gemini 2.5 Flash. Get a custom-tailored tech career guide with skills, resources, projects, market insights, and a realistic timeline — all in seconds.
 
-![Demo](https://htet-khant-linn.github.io/careerpath-ai/) <!-- Replace with actual screenshot URL -->
+![Demo](https://htet-khant-linn.github.io/careerpath-ai/) <Screenshot 2026-05-03 191808.png>
 
 ---
 
