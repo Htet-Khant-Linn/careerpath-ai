@@ -82,7 +82,44 @@
   .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
 
   #loading, #result { display: none; }
-  .rbody h2 { margin-top: 30px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+  /* --- Spaced Out Roadmap Styling --- */
+  .rbody { 
+    line-height: 1.8; 
+    font-size: 1.05rem; 
+    color: #333; 
+  }
+  
+  /* Adds space between major sections */
+  .rbody h2 { 
+    margin: 40px 0 20px 0; 
+    border-bottom: 2px solid var(--ink); 
+    padding-bottom: 10px;
+    font-size: 1.5rem;
+  }
+  
+  /* Increases gap between list items for better readability */
+  .rbody li { 
+    margin-bottom: 12px; 
+    padding-left: 5px;
+  }
+  
+  /* Styles labels like 'Goal:' or 'Topics:' to stand out */
+  .rbody strong { 
+    color: var(--ink); 
+    display: inline-block;
+    margin-right: 4px;
+  }
+  
+  /* Adds space between paragraphs */
+  .rbody p { 
+    margin-bottom: 20px; 
+  }
+  
+  /* Indents and spaces out sub-lists (like Resources) */
+  .rbody ul ul { 
+    margin-top: 10px; 
+    margin-left: 20px; 
+  }
 </style>
 </head>
 <body>
