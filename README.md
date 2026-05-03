@@ -1,6 +1,7 @@
 # 🚀 CareerPath AI
 
 Developed by [Htet Khant Linn](https://github.com/Htet-Khant-Linn)
+
 Original Repo Link - [CareerPath AI](https://github.com/Htet-Khant-Linn/careerpath-ai)
 
 **Personalized Learning Roadmap Generator** powered by Google's Agent Development Kit (ADK) and Gemini 2.5 Flash. Get a custom-tailored tech career guide with skills, resources, projects, market insights, and a realistic timeline — all in seconds.
